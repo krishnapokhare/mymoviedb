@@ -11,10 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.adapters.TvShowsAdapter;
+import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.models.Movie;
 import com.pokhare.mymoviedb.models.TvShow;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 import static com.pokhare.mymoviedb.MainActivity.LOG_TAG;
 
@@ -26,7 +35,7 @@ public class TvShowFragment extends Fragment {
 
 
     private List<TvShow> tvShows;
-
+    TvShowsAdapter tvShowsAdapter;
     public TvShowFragment() {
         // Required empty public constructor
     }
@@ -36,6 +45,8 @@ public class TvShowFragment extends Fragment {
         Log.i(LOG_TAG, "onCreate called");
         super.onCreate(savedInstanceState);
         tvShows=TvShow.Factory.GetPopularTvShows();
+        DbHelper helper=new DbHelper();
+        helper.GetImageBaseUrl();
     }
 
 
@@ -55,9 +66,56 @@ public class TvShowFragment extends Fragment {
             popularTvShowsRecyclerView.setAdapter(new TvShowsAdapter(tvShows));
         }
         popularTvShowsRecyclerView.setLayoutManager(MyLayoutManager);
-        TvShowsAdapter tvShowsAdapter = new TvShowsAdapter(tvShows);
+
+        tvShowsAdapter = new TvShowsAdapter(tvShows);
         popularTvShowsRecyclerView.setAdapter(tvShowsAdapter);
+        GetPopularTvShows();
         return view;
+    }
+
+    public void GetPopularTvShows() {
+        Log.i("DBHelper", "method:GetPopularTVShows");
+        DbHelper dbHelper=new DbHelper();
+        dbHelper.get("tv/popular?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+                try {
+                    JSONArray resultsArray = response.getJSONArray("results");
+                    for (int i = 0; i < resultsArray.length(); i++) {
+                        Log.i("DBHelper", resultsArray.getJSONObject(i).getString("name"));
+                        TvShow tvShow = TvShow.Factory.NewTvShow(resultsArray.getJSONObject(i));
+                        Log.i("DbHelperTest", tvShow.getName());
+
+                        tvShows.add(tvShow);
+                        Log.i("DbHelperTest", String.valueOf(tvShows.size()));
+                    }
+//
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvShowsAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
+            }
+        });
     }
 
 }

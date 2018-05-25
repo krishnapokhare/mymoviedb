@@ -11,11 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.adapters.MoviesAdapter;
+import com.pokhare.mymoviedb.helpers.DbHelper;
 import com.pokhare.mymoviedb.models.Movie;
-import com.pokhare.mymoviedb.models.TvShow;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 import static com.pokhare.mymoviedb.MainActivity.LOG_TAG;
 
@@ -26,6 +34,9 @@ import static com.pokhare.mymoviedb.MainActivity.LOG_TAG;
 public class MovieFragment extends Fragment {
 
     private List<Movie> movies;
+    RecyclerView popularMoviesRecyclerView;
+    MoviesAdapter moviesAdapter;
+
     public MovieFragment() {
         // Required empty public constructor
     }
@@ -34,7 +45,10 @@ public class MovieFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.i(LOG_TAG, "onCreate called");
         super.onCreate(savedInstanceState);
-        movies= Movie.Factory.GetPopularMovies();
+        movies = new ArrayList<Movie>();
+        DbHelper helper=new DbHelper();
+        helper.GetImageBaseUrl();
+        //movies= Movie.Factory.GetPopularMovies();
     }
 
 
@@ -42,21 +56,68 @@ public class MovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_movie, container, false);
-        RecyclerView popularMoviesRecyclerView = view.findViewById(R.id.recyclerView_popularMovies);
+        View view = inflater.inflate(R.layout.fragment_movie, container, false);
+
+        popularMoviesRecyclerView = view.findViewById(R.id.recyclerView_popularMovies);
         if (popularMoviesRecyclerView == null) {
             Log.i(LOG_TAG, "RecyclerView is null");
         }
         popularMoviesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (movies.size() > 0 & popularMoviesRecyclerView != null) {
-            popularMoviesRecyclerView.setAdapter(new MoviesAdapter(movies));
-        }
+//        if (movies.size() > 0 & popularMoviesRecyclerView != null) {
+//            popularMoviesRecyclerView.setAdapter(new MoviesAdapter(movies));
+//        }
         popularMoviesRecyclerView.setLayoutManager(MyLayoutManager);
-        MoviesAdapter moviesAdapter = new MoviesAdapter(movies);
+        moviesAdapter = new MoviesAdapter(movies);
         popularMoviesRecyclerView.setAdapter(moviesAdapter);
+        GetPopularMovies();
+
         return view;
     }
 
+    public void GetPopularMovies() {
+        Log.i("MovieDBHelper", "method:GetPopularMovies");
+        DbHelper movieHelper=new DbHelper();
+        movieHelper.get("movie/popular?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+                try {
+                    JSONArray resultsArray = response.getJSONArray("results");
+                    for (int i = 0; i < resultsArray.length(); i++) {
+                        Log.i("MovieDBHelper", resultsArray.getJSONObject(i).getString("title"));
+                        Movie movie = Movie.Factory.NewMovieFromJsonObject(resultsArray.getJSONObject(i));
+                        Log.i("MovieDbHelperTest", movie.getTitle());
+
+                        movies.add(movie);
+                        Log.i("MovieDbHelperTest", String.valueOf(movies.size()));
+                    }
+//
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            moviesAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
+            }
+        });
+    }
 }

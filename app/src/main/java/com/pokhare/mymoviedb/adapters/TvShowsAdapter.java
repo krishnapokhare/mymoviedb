@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.helpers.DbHelper;
 import com.pokhare.mymoviedb.models.TvShow;
 
 import java.util.List;
@@ -46,7 +48,7 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TvShow tvShow=tvShows.get(position);
         holder.mTitleTextView.setText(tvShow.getName());
-//        holder.mCoverImageView
+        Glide.with(holder.mCoverImageView.getContext()).load(DbHelper.IMAGE_BASE_URL + "/w500"+  tvShow.getPoster_path()).into(holder.mCoverImageView);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

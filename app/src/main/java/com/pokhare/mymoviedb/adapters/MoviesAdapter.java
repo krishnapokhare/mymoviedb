@@ -8,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.helpers.DbHelper;
 import com.pokhare.mymoviedb.models.Movie;
-import com.pokhare.mymoviedb.models.TvShow;
 
 import java.util.List;
 
@@ -46,8 +47,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapter.ViewHolder holder, int position) {
         Movie movie=movies.get(position);
-        holder.mTitleTextView.setText(movie.getName());
+        holder.mTitleTextView.setText(movie.getTitle());
+//        holder.mCoverImageView.setImageResource();
 //        holder.mCoverImageView
+        //Log.i("ImagePath",DbHelper.IMAGE_BASE_URL + "w500"+  movie.getPoster_path());
+        Glide.with(holder.mCoverImageView.getContext()).load(DbHelper.IMAGE_BASE_URL + "/w500"+  movie.getPoster_path()).into(holder.mCoverImageView);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
