@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.fragments.MainFragment;
 import com.pokhare.mymoviedb.fragments.MovieFragment;
 import com.pokhare.mymoviedb.fragments.TvShowFragment;
 
@@ -20,22 +21,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FragmentManager fm = getSupportFragmentManager();
-        Fragment tvShowFragment = fm.findFragmentById(R.id.fragmentContainer_popularTvShows);
-        Fragment movieFragment = fm.findFragmentById(R.id.fragmentContainer_popularMovies);
+        Fragment mainFragment = fm.findFragmentById(R.id.mainContainer);
+//        Fragment tvShowFragment = fm.findFragmentById(R.id.fragmentContainer_popularTvShows);
+//        Fragment movieFragment = fm.findFragmentById(R.id.fragmentContainer_popularMovies);
 
-        if (tvShowFragment == null) {
-            tvShowFragment = new TvShowFragment();
+        if (mainFragment == null) {
+            mainFragment = new MainFragment();
             fm.beginTransaction()
-                    .add(R.id.fragmentContainer_popularTvShows, tvShowFragment)
+                    .add(R.id.mainContainer, mainFragment)
                     .commit();
         }
 
-        if (movieFragment == null) {
-            movieFragment = new MovieFragment();
-            fm.beginTransaction()
-                    .add(R.id.fragmentContainer_popularMovies, movieFragment)
-                    .commit();
-        }
+//        if (tvShowFragment == null) {
+//            tvShowFragment = new TvShowFragment();
+//            fm.beginTransaction()
+//                    .add(R.id.fragmentContainer_popularTvShows, tvShowFragment)
+//                    .commit();
+//        }
+//
+//        if (movieFragment == null) {
+//            movieFragment = new MovieFragment();
+//            fm.beginTransaction()
+//                    .add(R.id.fragmentContainer_popularMovies, movieFragment)
+//                    .commit();
+//        }
     }
 
     @Override

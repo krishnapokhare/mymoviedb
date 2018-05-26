@@ -6,27 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-    <ScrollView
+    <FrameLayout
+        android:id="@+id/mainContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                ></SearchView>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fragmentContainer_popularTvShows">
-            </FrameLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fragmentContainer_popularMovies">
-            </FrameLayout>
-        </LinearLayout>
-    </ScrollView>
+        android:layout_height="wrap_content"></FrameLayout>
 </android.support.constraint.ConstraintLayout>
