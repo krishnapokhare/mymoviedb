@@ -1,14 +1,15 @@
-package com.pokhare.mymoviedb;
+package com.pokhare.mymoviedb.activities;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.SearchView;
+
+import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.fragments.MovieFragment;
+import com.pokhare.mymoviedb.fragments.TvShowFragment;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "DebugActivity";
@@ -42,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+//        // Associate searchable configuration with the SearchView
+//        SearchManager searchManager =
+//                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView =
+//                (SearchView) menu.findItem(R.id.search).getActionView();
+//        searchView.setSearchableInfo(
+//                searchManager.getSearchableInfo(getComponentName()));
 
         return true;
     }
