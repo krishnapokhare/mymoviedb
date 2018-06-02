@@ -1,6 +1,7 @@
 package com.pokhare.mymoviedb.adapters;
 
 import android.support.annotation.NonNull;
+import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.GlideApp;
+import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.TvShow;
 
 import java.util.List;
@@ -48,7 +51,11 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TvShow tvShow=tvShows.get(position);
         holder.mTitleTextView.setText(tvShow.getName());
-        Glide.with(holder.mCoverImageView.getContext()).load(DbHelper.IMAGE_BASE_URL + "/w500"+  tvShow.getPoster_path()).into(holder.mCoverImageView);
+        CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.mCoverImageView.getContext());
+        GlideApp.with(holder.mCoverImageView.getContext())
+                .load(DbHelper.IMAGE_BASE_URL + "/w500"+  tvShow.getPoster_path())
+                .placeholder(circularProgressDrawable)
+                .into(holder.mCoverImageView);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

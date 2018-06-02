@@ -48,7 +48,7 @@ public class MovieFragment extends Fragment {
         Log.i(LOG_TAG, "onCreate called");
         super.onCreate(savedInstanceState);
         movies = new ArrayList<Movie>();
-        DbHelper helper=new DbHelper();
+        DbHelper helper = new DbHelper();
         helper.GetImageBaseUrl();
         //movies= Movie.Factory.GetPopularMovies();
     }
@@ -89,20 +89,22 @@ public class MovieFragment extends Fragment {
 
     public void GetPopularMovies() {
         Log.i("MovieDBHelper", "method:GetPopularMovies");
-        DbHelper movieHelper=new DbHelper();
+        DbHelper movieHelper = new DbHelper();
         movieHelper.get("movie/popular?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.i("MovieDbHelperTest", "Success");
                 // If the response is JSONObject instead of expected JSONArray
                 try {
                     JSONArray resultsArray = response.getJSONArray("results");
                     for (int i = 0; i < resultsArray.length(); i++) {
+//                    for (int i = 5; i >= 0; i--) {
                         Log.i("MovieDBHelper", resultsArray.getJSONObject(i).getString("title"));
-                        Movie movie = Movie.Factory.NewMovieFromJsonObject(resultsArray.getJSONObject(i));
+                        Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
                         Log.i("MovieDbHelperTest", movie.getTitle());
 
                         movies.add(movie);
-                        Log.i("MovieDbHelperTest", String.valueOf(movies.size()));
+                        Log.i("MovieDbHelperTest", String.valueOf(i));
                     }
 //
                 } catch (JSONException e) {

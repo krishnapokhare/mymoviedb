@@ -117,7 +117,7 @@ public class MainFragment extends Fragment {
                     JSONArray resultsArray = response.getJSONArray("results");
                     for (int i = 0; i < resultsArray.length(); i++) {
                         Log.i("MovieDBHelper", resultsArray.getJSONObject(i).getString("title"));
-                        Movie movie = Movie.Factory.NewMovieFromJsonObject(resultsArray.getJSONObject(i));
+                        Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
                         Log.i("MovieDbHelperTest", movie.getTitle());
 
                         movies.add(movie);

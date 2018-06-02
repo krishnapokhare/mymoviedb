@@ -1,6 +1,8 @@
 package com.pokhare.mymoviedb.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.GlideApp;
+import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.Movie;
 
 import java.util.List;
@@ -38,7 +42,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull MoviesAdapter.ViewHolder holder, int position) {
         Movie movie = movies.get(position);
         holder.mTitleTextView.setText(movie.getTitle());
-        Glide.with(holder.mCoverImageView.getContext()).load(DbHelper.IMAGE_BASE_URL + "/w500" + movie.getPoster_path()).into(holder.mCoverImageView);
+
+        CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.mCoverImageView.getContext());
+        GlideApp.with(holder.mCoverImageView.getContext())
+                .load(DbHelper.IMAGE_BASE_URL + "/w500" + movie.getPoster_path())
+                .placeholder(circularProgressDrawable)
+                .into(holder.mCoverImageView);
     }
 
     public interface MoviesAdapterListener {

@@ -1,23 +1,40 @@
 package com.pokhare.mymoviedb.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.adapters.FeaturedCastAdapter;
+import com.pokhare.mymoviedb.adapters.FeaturedCrewAdapter;
+import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.GlideApp;
+import com.pokhare.mymoviedb.models.FeaturedCast;
+import com.pokhare.mymoviedb.models.FeaturedCrew;
+import com.pokhare.mymoviedb.models.Movie;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MovieDetailFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MovieDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import cz.msebera.android.httpclient.Header;
+
 public class MovieDetailFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,9 +42,17 @@ public class MovieDetailFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private Integer mParam1;
+    private Integer movieId;
     private String mParam2;
-
+    private Movie movie;
+    ProgressBar ratingProgressBar;
+    TextView txtProgressbar;
+    ImageView movieImageView;
+    private TextView overviewTextView;
+    private List<FeaturedCrew> featuredCrewList;
+    private RecyclerView featuredCrewRecyclerView;
+    private List<FeaturedCast> featuredCastList;
+    private RecyclerView featuredCastRecyclerView;
 //    private OnFragmentInteractionListener mListener;
 
     public MovieDetailFragment() {
@@ -39,7 +64,7 @@ public class MovieDetailFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param movieId Parameter 1.
-    //     * @param param2 Parameter 2.
+     *                //     * @param param2 Parameter 2.
      * @return A new instance of fragment MovieDetailFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -56,16 +81,95 @@ public class MovieDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
+            movieId = getArguments().getInt(ARG_PARAM1);
+//            movie = getMovieDetails(movieId);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        featuredCrewList = new ArrayList<FeaturedCrew>();
+        featuredCastList = new ArrayList<FeaturedCast>();
+    }
+
+    private void getMovieDetails(Integer movieId) {
+        Log.i("MovieDBHelper", "method:getMovieDetails");
+        DbHelper movieHelper = new DbHelper();
+        movieHelper.get("movie/" + movieId + "?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.i("MovieDbHelperTest", "Success");
+                // If the response is JSONObject instead of expected JSONArray
+                try {
+//                    JSONArray resultsArray = response.getJSONArray("results");
+//                    for (int i = 0; i < resultsArray.length(); i++) {
+//                    for (int i = 5; i >= 0; i--) {
+//                        Log.i("MovieDBHelper", response.getString("");
+                    movie = Movie.Factory.NewMovieWithAdditionalFields(response);
+                    Log.i("MovieDbHelperTest", movie.getTitle());
+                    SetAllViewFields();
+//                        movies.add(movie);
+//                        Log.i("MovieDbHelperTest", String.valueOf(i));
+                }//
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable
+                    throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject
+                    errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        ratingProgressBar = view.findViewById(R.id.ratingProgressBar);
+        txtProgressbar = view.findViewById(R.id.txtProgress);
+        movieImageView = view.findViewById(R.id.detailsImageView);
+        overviewTextView = view.findViewById(R.id.overviewTextView);
+        featuredCrewRecyclerView = view.findViewById(R.id.featuredCrewRecyclerView);
+        GridLayoutManager gridLayoutManager1 = new GridLayoutManager(getActivity(), 2);
+        featuredCrewRecyclerView.setLayoutManager(gridLayoutManager1); // set LayoutManager to RecyclerView
+        featuredCastRecyclerView = view.findViewById(R.id.featuredCastRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        featuredCastRecyclerView.setLayoutManager(linearLayoutManager); // set LayoutManager to RecyclerView
+
+
+        getMovieDetails(movieId);
+        return view;
+    }
+
+    private void SetAllViewFields() {
+        ratingProgressBar.setProgress((int) movie.getVote_average() * 10);
+        txtProgressbar.setText((movie.getVote_average() * 10) + "%");
+        overviewTextView.setText(movie.getOverview());
+        GlideApp.with(this).load(DbHelper.IMAGE_BASE_URL + "w500" + movie.getBackdrop_path()).placeholder(R.drawable.circular_progress_bar).into(movieImageView);
+        featuredCrewList.add(new FeaturedCrew("David Leitch", "Director"));
+        featuredCrewList.add(new FeaturedCrew("Paul Wernick", "Screenplay"));
+        featuredCrewList.add(new FeaturedCrew("Ryan Reynolds", "Screenplay"));
+        featuredCrewList.add(new FeaturedCrew("Fabian Nicieza", "Characters"));
+        FeaturedCrewAdapter featuredCrewAdapter = new FeaturedCrewAdapter(featuredCrewList);
+        featuredCrewRecyclerView.setAdapter(featuredCrewAdapter); // set the Adapter to RecyclerView
+        featuredCastList.add(new FeaturedCast("Ryan Reynolds", "Wade Wilson / Deadpool / Juggernaut / Himself", "http://image.tmdb.org/t/p/w92/h1co81QaT2nJA41Sb7eZwmWl1L2.jpg"));
+        featuredCastList.add(new FeaturedCast("Josh Brolin", "Cable", "http://image.tmdb.org/t/p/w92/x8KKnvHyPvH16M6waAnY1OeCtA8.jpg"));
+        featuredCastList.add(new FeaturedCast("Morena Baccarin", "Vanessa", "http://image.tmdb.org/t/p/w92/dhdQT0fMRcbg8Gi9nx7JF0oVzzr.jpg"));
+        featuredCastList.add(new FeaturedCast("Julian Dennison", "Russel Collins / Firefist", "http://image.tmdb.org/t/p/w92/ApBsNEF9JnXDJ27XLaWnRXdVCQz.jpg"));
+        FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList);
+        featuredCastRecyclerView.setAdapter(featuredCastAdapter);
+
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

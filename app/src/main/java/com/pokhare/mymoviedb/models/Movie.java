@@ -8,6 +8,9 @@ import com.pokhare.mymoviedb.helpers.DbHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,29 +25,67 @@ public class Movie {
     private String original_language;
     private String original_title;
     private List<Integer> genre_ids;
+    private List<Integer> productionCompanies_ids;
     private String backdrop_path;
     private boolean adult;
     private String overview;
-    private String release_date;
+    private Date release_date;
+    private long budget;
+    private String imdb_id;
+    private int runtime;
+    private String tagline;
+    private String status;
 
-    @Override
-    public String toString() {
-        return "Movie{" +
-                "vote_count=" + vote_count +
-                ", id=" + id +
-                ", video=" + video +
-                ", vote_average=" + vote_average +
-                ", title='" + title + '\'' +
-                ", popularity=" + popularity +
-                ", poster_path='" + poster_path + '\'' +
-                ", original_language='" + original_language + '\'' +
-                ", original_title='" + original_title + '\'' +
-                ", genre_ids=" + genre_ids +
-                ", backdrop_path='" + backdrop_path + '\'' +
-                ", adult=" + adult +
-                ", overview='" + overview + '\'' +
-                ", release_date='" + release_date + '\'' +
-                '}';
+    public List<Integer> getProductionCompanies_ids() {
+        return productionCompanies_ids;
+    }
+
+    public void setProductionCompanies_ids(List<Integer> productionCompanies_ids) {
+        this.productionCompanies_ids = productionCompanies_ids;
+    }
+
+    public void setRelease_date(Date release_date) {
+        this.release_date = release_date;
+    }
+
+    public long getBudget() {
+        return budget;
+    }
+
+    public void setBudget(long budget) {
+        this.budget = budget;
+    }
+
+    public String getImdb_id() {
+        return imdb_id;
+    }
+
+    public void setImdb_id(String imdb_id) {
+        this.imdb_id = imdb_id;
+    }
+
+    public int getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
+    }
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getVote_count() {
@@ -151,12 +192,34 @@ public class Movie {
         this.overview = overview;
     }
 
-    public String getRelease_date() {
+    public Date getRelease_date() {
         return release_date;
     }
 
-    public void setRelease_date(String release_date) {
-        this.release_date = release_date;
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "vote_count=" + vote_count +
+                ", id=" + id +
+                ", video=" + video +
+                ", vote_average=" + vote_average +
+                ", title='" + title + '\'' +
+                ", popularity=" + popularity +
+                ", poster_path='" + poster_path + '\'' +
+                ", original_language='" + original_language + '\'' +
+                ", original_title='" + original_title + '\'' +
+                ", genre_ids=" + genre_ids +
+                ", productionCompanies_ids=" + productionCompanies_ids +
+                ", backdrop_path='" + backdrop_path + '\'' +
+                ", adult=" + adult +
+                ", overview='" + overview + '\'' +
+                ", release_date=" + release_date +
+                ", budget=" + budget +
+                ", imdb_id='" + imdb_id + '\'' +
+                ", runtime=" + runtime +
+                ", tagline='" + tagline + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 
     public static class Factory {
@@ -166,25 +229,47 @@ public class Movie {
             return movie;
         }
 
-        public static Movie NewMovieFromJsonObject(JSONObject jsonObject) {
+        public static Movie NewMovieWithBasicFields(JSONObject jsonObject) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Movie movie = new Movie();
             Map<String, Object> map = Convert.fromJson(jsonObject);
             try {
                 movie.setTitle(jsonObject.getString("title"));
                 movie.setAdult(jsonObject.getBoolean("adult"));
                 movie.setBackdrop_path(jsonObject.getString("backdrop_path"));
-                movie.setGenre_ids((List<Integer>)map.get("genre_ids"));
+                movie.setGenre_ids((List<Integer>) map.get("genre_ids"));
                 movie.setId(jsonObject.getInt("id"));
                 movie.setOriginal_language(jsonObject.getString("original_language"));
                 movie.setOriginal_title(jsonObject.getString("original_title"));
                 movie.setOverview(jsonObject.getString("overview"));
                 movie.setPopularity(jsonObject.getDouble("popularity"));
                 movie.setPoster_path(jsonObject.getString("poster_path"));
-                movie.setRelease_date(jsonObject.getString("release_date"));
+                try {
+                    movie.setRelease_date(format.parse(jsonObject.getString("release_date")));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 movie.setVideo(jsonObject.getBoolean("video"));
                 movie.setVote_average(jsonObject.getDouble("vote_average"));
                 movie.setVote_count(jsonObject.getInt("vote_count"));
-                Log.i("Movie",movie.toString());
+                Log.i("Movie", movie.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return movie;
+        }
+
+        public static Movie NewMovieWithAdditionalFields(JSONObject jsonObject) {
+            Movie movie = Movie.Factory.NewMovieWithBasicFields(jsonObject);
+            Map<String, Object> map = Convert.fromJson(jsonObject);
+            try {
+                movie.setBudget(jsonObject.getLong("budget"));
+                movie.setImdb_id(jsonObject.getString("imdb_id"));
+                movie.setProductionCompanies_ids((List<Integer>)map.get("production_companies"));
+                movie.setRuntime(jsonObject.getInt("runtime"));
+                movie.setStatus(jsonObject.getString("status"));
+                movie.setTagline(jsonObject.getString("tagline"));
+                Log.i("MovieWithDetails", movie.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
