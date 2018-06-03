@@ -4,7 +4,7 @@
     <dimen name="icon_width">32dp</dimen>
     <dimen name="icon_padding">5dp</dimen>
     <dimen name="icon_height">32dp</dimen>
-    <dimen name="card_height">300dp</dimen>
+    <dimen name="card_height">224dp</dimen>
     <dimen name="popularHeading">20sp</dimen>
     <dimen name="large_text_size">20sp</dimen>
 </resources>

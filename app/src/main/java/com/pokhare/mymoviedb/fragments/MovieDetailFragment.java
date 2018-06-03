@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.activities.MainActivity;
 import com.pokhare.mymoviedb.adapters.FeaturedCastAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCrewAdapter;
 import com.pokhare.mymoviedb.helpers.DbHelper;
@@ -86,6 +87,7 @@ public class MovieDetailFragment extends Fragment {
         }
         featuredCrewList = new ArrayList<FeaturedCrew>();
         featuredCastList = new ArrayList<FeaturedCast>();
+
     }
 
     private void getMovieDetails(final Integer movieId) {
@@ -103,6 +105,7 @@ public class MovieDetailFragment extends Fragment {
 //                        Log.i("MovieDBHelper", response.getString("");
                     movie = Movie.Factory.NewMovieWithAdditionalFields(response);
                     Log.i("MovieDbHelperTest", movie.getTitle());
+                    ((MainActivity) getActivity()).setActionBarTitle(movie.getTitle());
                     SetAllViewFields();
                     GetFeaturedCrew(movieId);
                     GetFeaturedCast(movieId);

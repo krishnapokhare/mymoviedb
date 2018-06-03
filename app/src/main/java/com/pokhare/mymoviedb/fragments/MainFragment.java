@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.activities.MainActivity;
 import com.pokhare.mymoviedb.adapters.MoviesAdapter;
 import com.pokhare.mymoviedb.adapters.TvShowsAdapter;
 import com.pokhare.mymoviedb.helpers.DbHelper;
@@ -61,6 +62,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        ((MainActivity) getActivity()).setActionBarTitle("My Movie Database");
         //Movie
         RecyclerView popularMoviesRecyclerView = view.findViewById(R.id.recyclerView_popularMovies);
         if (popularMoviesRecyclerView == null) {
@@ -115,7 +117,8 @@ public class MainFragment extends Fragment {
                 // If the response is JSONObject instead of expected JSONArray
                 try {
                     JSONArray resultsArray = response.getJSONArray("results");
-                    for (int i = 0; i < resultsArray.length(); i++) {
+                    movies.clear();
+                    for (int i = 0; i < 4; i++) {
                         Log.i("MovieDBHelper", resultsArray.getJSONObject(i).getString("title"));
                         Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
                         Log.i("MovieDbHelperTest", movie.getTitle());
@@ -160,7 +163,8 @@ public class MainFragment extends Fragment {
                 // If the response is JSONObject instead of expected JSONArray
                 try {
                     JSONArray resultsArray = response.getJSONArray("results");
-                    for (int i = 0; i < resultsArray.length(); i++) {
+                    tvShows.clear();
+                    for (int i = 0; i < 4; i++) {
                         Log.i("DBHelper", resultsArray.getJSONObject(i).getString("name"));
                         TvShow tvShow = TvShow.Factory.NewTvShow(resultsArray.getJSONObject(i));
                         Log.i("DbHelperTest", tvShow.getName());

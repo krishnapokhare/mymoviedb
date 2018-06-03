@@ -29,20 +29,6 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.mainContainer, mainFragment)
                     .commit();
         }
-
-//        if (tvShowFragment == null) {
-//            tvShowFragment = new TvShowFragment();
-//            fm.beginTransaction()
-//                    .add(R.id.fragmentContainer_popularTvShows, tvShowFragment)
-//                    .commit();
-//        }
-//
-//        if (movieFragment == null) {
-//            movieFragment = new MovieFragment();
-//            fm.beginTransaction()
-//                    .add(R.id.fragmentContainer_popularMovies, movieFragment)
-//                    .commit();
-//        }
     }
 
     @Override
@@ -59,5 +45,9 @@ public class MainActivity extends AppCompatActivity {
 //                searchManager.getSearchableInfo(getComponentName()));
 
         return true;
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }
