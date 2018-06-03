@@ -10,12 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.pokhare.mymoviedb.R;
+import com.pokhare.mymoviedb.helpers.DbHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
 import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.FeaturedCast;
-import com.pokhare.mymoviedb.models.FeaturedCrew;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class FeaturedCastAdapter extends RecyclerView.Adapter<FeaturedCastAdapte
         Log.d("FeaturedCastAdapter",featuredCast.getImageUrl());
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.featuredCastImageView.getContext());
         GlideApp.with(holder.featuredCastImageView.getContext())
-                .load(featuredCast.getImageUrl())
+                .load(DbHelper.IMAGE_BASE_URL + "/w92" + featuredCast.getImageUrl())
                 .placeholder(circularProgressDrawable)
                 .into(holder.featuredCastImageView);
 

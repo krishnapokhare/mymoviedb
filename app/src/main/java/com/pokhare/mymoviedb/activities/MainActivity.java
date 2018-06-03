@@ -1,16 +1,14 @@
 package com.pokhare.mymoviedb.activities;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.fragments.MainFragment;
-import com.pokhare.mymoviedb.fragments.MovieFragment;
-import com.pokhare.mymoviedb.fragments.TvShowFragment;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "DebugActivity";
