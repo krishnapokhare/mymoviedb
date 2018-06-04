@@ -38,6 +38,7 @@ public class CastDetailsFragment extends Fragment {
     private FeaturedCast featuredCast;
     private TextView castNameTextView;
     private ImageView castImageView;
+    private TextView castDetailsBiographyTextView;
 
 
     public CastDetailsFragment() {
@@ -107,6 +108,7 @@ public class CastDetailsFragment extends Fragment {
 
     private void SetAllViewFields() {
         castNameTextView.setText(featuredCast.getName());
+        castDetailsBiographyTextView.setText(featuredCast.getBiography());
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(getActivity());
         GlideApp.with(this)
                 .load(DbHelper.IMAGE_BASE_URL + "w500" + featuredCast.getImageUrl())
@@ -121,6 +123,7 @@ public class CastDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_cast_details, container, false);
         castNameTextView = view.findViewById(R.id.castDetailsNameTextView);
         castImageView = view.findViewById(R.id.castDetailsImageView);
+        castDetailsBiographyTextView = view.findViewById(R.id.castDetailsBiographyTextView);
         return view;
     }
 }

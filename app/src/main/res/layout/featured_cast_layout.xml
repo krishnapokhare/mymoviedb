@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="DefaultText"
             android:adjustViewBounds="true"
-            android:src="@drawable/ryan_reynolds"/>
+            android:src="@drawable/image_person" />
 
         <TextView
             android:id="@+id/featuredCastNameTextView"

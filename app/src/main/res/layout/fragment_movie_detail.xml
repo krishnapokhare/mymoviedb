@@ -20,8 +20,7 @@
                 android:layout_gravity="top"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
-                android:contentDescription="Header Image"
-                android:src="@drawable/deadpool2" />
+                android:contentDescription="Header Image" />
 
             <ImageView
                 android:id="@+id/detailsImagePoster"
@@ -31,8 +30,7 @@
                 android:adjustViewBounds="true"
                 android:elevation="5dp"
                 android:paddingBottom="16dp"
-                android:paddingStart="16dp"
-                android:src="@drawable/avengers" />
+                android:paddingStart="16dp" />
 
             <TextView
                 android:id="@+id/movieTitleTextView"

@@ -53,14 +53,14 @@ public class CastRecyclerViewAdapter extends RecyclerView.Adapter<CastRecyclerVi
                     .load(DbHelper.IMAGE_BASE_URL + "/w92" + holder.featuredCast.getImageUrl())
                     .placeholder(circularProgressDrawable)
                     //.fallback(R.drawable.default_person)
-                    .error(R.drawable.default_person)
+                    .error(R.drawable.image_person)
                     .into(holder.castImageView);
         } else {
             GlideApp.with(holder.castImageView.getContext())
-                    .load(R.drawable.default_person)
+                    .load(R.drawable.image_person)
                     .placeholder(circularProgressDrawable)
                     //.fallback(R.drawable.default_person)
-                    .error(R.drawable.default_person)
+                    .error(R.drawable.image_person)
                     .into(holder.castImageView);
         }
 

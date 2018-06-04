@@ -24,7 +24,7 @@
                 android:layout_height="200dp"
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ryan_reynolds" />
+                android:src="@drawable/image_person" />
         </android.support.v7.widget.CardView>
 
         <TextView
@@ -53,8 +53,6 @@
             android:text="Personal Info"
             android:textSize="@dimen/text_size"
             android:textStyle="bold" />
-
-        <Re
 
     </LinearLayout>
 </ScrollView>

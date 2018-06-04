@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.activities.MainActivity;
+import com.pokhare.mymoviedb.adapters.CastRecyclerViewAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCastAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCrewAdapter;
 import com.pokhare.mymoviedb.helpers.DbHelper;
@@ -254,7 +255,16 @@ public class MovieDetailFragment extends Fragment {
                         FeaturedCast featuredCast = new FeaturedCast(id, name, character, profile_path);
                         featuredCastList.add(featuredCast);
                     }
-                    FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList.subList(0, 9));
+                    FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList.subList(0, 9), new CastRecyclerViewAdapter.OnListFragmentInteractionListener() {
+                        @Override
+                        public void castFragmentOnClick(FeaturedCast featuredCast) {
+                            CastDetailsFragment castDetailsFragment = CastDetailsFragment.newInstance(featuredCast.getId());
+                            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.mainContainer, castDetailsFragment);
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        }
+                    });
                     featuredCastRecyclerView.setAdapter(featuredCastAdapter);
                     viewAllCastTextView.setOnClickListener(new View.OnClickListener() {
                         @Override

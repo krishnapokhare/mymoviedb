@@ -20,9 +20,11 @@ import java.util.List;
 
 public class FeaturedCastAdapter extends RecyclerView.Adapter<FeaturedCastAdapter.ViewHolder> {
     private List<FeaturedCast> featuredCastList;
+    CastRecyclerViewAdapter.OnListFragmentInteractionListener mListener;
 
-    public FeaturedCastAdapter(List<FeaturedCast> featuredCastList) {
+    public FeaturedCastAdapter(List<FeaturedCast> featuredCastList, CastRecyclerViewAdapter.OnListFragmentInteractionListener mListener) {
         this.featuredCastList = featuredCastList;
+        this.mListener = mListener;
     }
 
     @NonNull
@@ -34,8 +36,8 @@ public class FeaturedCastAdapter extends RecyclerView.Adapter<FeaturedCastAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        FeaturedCast featuredCast = featuredCastList.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        final FeaturedCast featuredCast = featuredCastList.get(position);
         holder.featuredCastNameTextView.setText(featuredCast.getName());
         holder.featuredCastCharacterTextView.setText(featuredCast.getCharacter());
         Log.d("FeaturedCastAdapter",featuredCast.getImageUrl());
@@ -44,7 +46,16 @@ public class FeaturedCastAdapter extends RecyclerView.Adapter<FeaturedCastAdapte
                 .load(DbHelper.IMAGE_BASE_URL + "/w92" + featuredCast.getImageUrl())
                 .placeholder(circularProgressDrawable)
                 .into(holder.featuredCastImageView);
-
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.castFragmentOnClick(featuredCast);
+                }
+            }
+        });
     }
 
     @Override
