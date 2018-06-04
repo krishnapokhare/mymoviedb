@@ -2,6 +2,7 @@ package com.pokhare.mymoviedb.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,6 +54,9 @@ public class MovieDetailFragment extends Fragment {
     private RecyclerView featuredCrewRecyclerView;
     private List<FeaturedCast> featuredCastList;
     private RecyclerView featuredCastRecyclerView;
+    private ImageView moviePosterImageView;
+    private TextView movieTitleTextView;
+    private TextView viewAllCastTextView;
 //    private OnFragmentInteractionListener mListener;
 
     public MovieDetailFragment() {
@@ -143,6 +147,9 @@ public class MovieDetailFragment extends Fragment {
         txtProgressbar = view.findViewById(R.id.txtProgress);
         movieImageView = view.findViewById(R.id.detailsImageView);
         overviewTextView = view.findViewById(R.id.overviewTextView);
+        movieTitleTextView = view.findViewById(R.id.movieTitleTextView);
+        moviePosterImageView = view.findViewById(R.id.detailsImagePoster);
+        viewAllCastTextView = view.findViewById(R.id.viewAllCastTextView);
         featuredCrewRecyclerView = view.findViewById(R.id.featuredCrewRecyclerView);
         GridLayoutManager gridLayoutManager1 = new GridLayoutManager(getActivity(), 2);
         featuredCrewRecyclerView.setLayoutManager(gridLayoutManager1); // set LayoutManager to RecyclerView
@@ -160,11 +167,18 @@ public class MovieDetailFragment extends Fragment {
         ratingProgressBar.setProgress((int) movie.getVote_average() * 10);
         txtProgressbar.setText((movie.getVote_average() * 10) + "%");
         overviewTextView.setText(movie.getOverview());
+        movieTitleTextView.setText(movie.getTitle());
+
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(getActivity());
         GlideApp.with(this)
                 .load(DbHelper.IMAGE_BASE_URL + "w500" + movie.getBackdrop_path())
                 .placeholder(circularProgressDrawable)
                 .into(movieImageView);
+        GlideApp.with(this)
+                .load(DbHelper.IMAGE_BASE_URL + "w154" + movie.getPoster_path())
+                .placeholder(circularProgressDrawable)
+                .into(moviePosterImageView);
+
 //        featuredCrewList.add(new FeaturedCrew("David Leitch", "Director"));
 //        featuredCrewList.add(new FeaturedCrew("Paul Wernick", "Screenplay"));
 //        featuredCrewList.add(new FeaturedCrew("Ryan Reynolds", "Screenplay"));
@@ -186,6 +200,7 @@ public class MovieDetailFragment extends Fragment {
                 Log.i("MovieDbHelperTest", "Success");
                 // If the response is JSONObject instead of expected JSONArray
                 try {
+                    featuredCrewList.clear();
                     JSONArray resultsArray = response.getJSONArray("crew");
                     for (int i = 0; i < resultsArray.length() && i < 4; i++) {
                         JSONObject jsonObject = resultsArray.getJSONObject(i);
@@ -228,17 +243,29 @@ public class MovieDetailFragment extends Fragment {
                 Log.i("MovieDbHelperTest", "Success");
                 // If the response is JSONObject instead of expected JSONArray
                 try {
+                    featuredCastList.clear();
                     JSONArray resultsArray = response.getJSONArray("cast");
-                    for (int i = 0; i < resultsArray.length() && i < 20; i++) {
+                    for (int i = 0; i < resultsArray.length(); i++) {
                         JSONObject jsonObject = resultsArray.getJSONObject(i);
+                        int id = jsonObject.getInt("id");
                         String name = jsonObject.getString("name");
                         String character = jsonObject.getString("character");
                         String profile_path = jsonObject.getString("profile_path");
-                        FeaturedCast featuredCast = new FeaturedCast(name, character, profile_path);
+                        FeaturedCast featuredCast = new FeaturedCast(id, name, character, profile_path);
                         featuredCastList.add(featuredCast);
                     }
-                    FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList);
+                    FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList.subList(0, 9));
                     featuredCastRecyclerView.setAdapter(featuredCastAdapter);
+                    viewAllCastTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CastFragment castFragment = CastFragment.newInstance(featuredCastList);
+                            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                            fragmentTransaction.replace(R.id.mainContainer, castFragment);
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        }
+                    });
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (Exception e) {

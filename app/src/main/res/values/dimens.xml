@@ -7,4 +7,8 @@
     <dimen name="card_height">224dp</dimen>
     <dimen name="popularHeading">20sp</dimen>
     <dimen name="large_text_size">20sp</dimen>
+    <dimen name="extralarge_text_size">22dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="text_margin_small">8dp</dimen>
+    <dimen name="text_size_large">20sp</dimen>
 </resources>

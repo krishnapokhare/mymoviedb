@@ -8,4 +8,6 @@
     <string name="popularMovies">Popular Movies</string>
     <string name="search_title">Search Movies or Shows</string>
     <string name="search_hint">Search Movies or TV Shows</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="actor_name">Actor Name</string>
 </resources>
