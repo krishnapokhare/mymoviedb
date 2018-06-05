@@ -3,7 +3,6 @@ package com.pokhare.mymoviedb.models;
 import android.util.Log;
 
 import com.pokhare.mymoviedb.helpers.Convert;
-import com.pokhare.mymoviedb.helpers.DbHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

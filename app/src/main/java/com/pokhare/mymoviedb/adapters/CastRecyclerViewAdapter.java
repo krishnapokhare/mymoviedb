@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pokhare.mymoviedb.R;
-import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
 import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.FeaturedCast;
@@ -46,23 +46,12 @@ public class CastRecyclerViewAdapter extends RecyclerView.Adapter<CastRecyclerVi
         holder.castNameTextView.setText(holder.featuredCast.getName());
         holder.castCharacterTextView.setText(holder.featuredCast.getCharacter());
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.castImageView.getContext());
-        if (holder.featuredCast.getImageUrl() != "null")
-
-        {
-            GlideApp.with(holder.castImageView.getContext())
-                    .load(DbHelper.IMAGE_BASE_URL + "/w92" + holder.featuredCast.getImageUrl())
-                    .placeholder(circularProgressDrawable)
-                    //.fallback(R.drawable.default_person)
-                    .error(R.drawable.image_person)
-                    .into(holder.castImageView);
-        } else {
-            GlideApp.with(holder.castImageView.getContext())
-                    .load(R.drawable.image_person)
-                    .placeholder(circularProgressDrawable)
-                    //.fallback(R.drawable.default_person)
-                    .error(R.drawable.image_person)
-                    .into(holder.castImageView);
-        }
+        GlideApp.with(holder.castImageView.getContext())
+                .load(ApiHelper.getInstance().GetImageUrl(holder.featuredCast.getImageUrl(), "w92"))
+                .placeholder(circularProgressDrawable)
+                //.fallback(R.drawable.default_person)
+                .error(R.drawable.image_person)
+                .into(holder.castImageView);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

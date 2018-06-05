@@ -16,8 +16,6 @@ import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.adapters.SearchAdapter;
 import com.pokhare.mymoviedb.fragments.MainFragment;
 
-//import com.pokhare.mymoviedb.adapters.SearchAdapter;
-
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "DebugActivity";
     private SearchAdapter mSearchAdapter;

@@ -11,17 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.activities.MainActivity;
-import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.ApiCallbackListener;
+import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
 import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.FeaturedCast;
 
 import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,44 +64,9 @@ public class CastDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             castId = getArguments().getInt(ARG_CAST_ID);
-            getCastDetails(castId);
+            ApiHelper.getInstance().GetJsonObject("person/" + castId + "?language=en-US&page=1&"
+                    , new GetCastDetailsTask(), getContext().getApplicationContext());
         }
-    }
-
-    private void getCastDetails(int castId) {
-        Log.i("MovieDBHelper", "method:getCastDetails");
-        DbHelper movieHelper = new DbHelper();
-        movieHelper.get("person/" + castId + "?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("MovieDbHelperTest", "Success");
-                // If the response is JSONObject instead of expected JSONArray
-                try {
-                    featuredCast = FeaturedCast.Factory.NewFeaturedCast(response);
-                    Log.i("FeaturedCast", featuredCast.toString());
-                    ((MainActivity) getActivity()).setActionBarTitle(featuredCast.getName());
-                    SetAllViewFields();
-                }//
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable
-                    throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject
-                    errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
-            }
-        });
     }
 
     private void SetAllViewFields() {
@@ -111,9 +74,27 @@ public class CastDetailsFragment extends Fragment {
         castDetailsBiographyTextView.setText(featuredCast.getBiography());
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(getActivity());
         GlideApp.with(this)
-                .load(DbHelper.IMAGE_BASE_URL + "w500" + featuredCast.getImageUrl())
+                .load(ApiHelper.getInstance().GetImageUrl(featuredCast.getImageUrl(), "w500"))
                 .placeholder(circularProgressDrawable)
                 .into(castImageView);
+    }
+
+    class GetCastDetailsTask implements ApiCallbackListener {
+
+        @Override
+        public void onTaskCompleted(JSONObject result) {
+            Log.i("ApiHelper", "Success");
+            // If the response is JSONObject instead of expected JSONArray
+            try {
+                featuredCast = FeaturedCast.Factory.NewFeaturedCast(result);
+                Log.i("FeaturedCast", featuredCast.toString());
+                ((MainActivity) getActivity()).setActionBarTitle(featuredCast.getName());
+                SetAllViewFields();
+            }//
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

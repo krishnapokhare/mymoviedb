@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pokhare.mymoviedb.R;
-import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
 import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.Movie;
@@ -43,8 +43,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.mCoverImageView.getContext());
         GlideApp.with(holder.mCoverImageView.getContext())
-                .load(DbHelper.IMAGE_BASE_URL + "/w500" + movie.getBackdrop_path())
+                .load(ApiHelper.getInstance().GetImageUrl(movie.getBackdrop_path(), "w500"))
                 .placeholder(circularProgressDrawable)
+                .fallback(R.drawable.default_picture)
+                .error(R.drawable.default_picture)
                 .into(holder.mCoverImageView);
     }
 

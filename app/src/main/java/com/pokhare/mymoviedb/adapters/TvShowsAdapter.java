@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pokhare.mymoviedb.R;
-import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
 import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.TvShow;
@@ -52,8 +52,32 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.ViewHold
         holder.mTitleTextView.setText(tvShow.getName());
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.mCoverImageView.getContext());
         GlideApp.with(holder.mCoverImageView.getContext())
-                .load(DbHelper.IMAGE_BASE_URL + "/w500" + tvShow.getBackdrop_path())
+                .load(ApiHelper.getInstance().GetImageUrl(tvShow.getBackdrop_path(), "w500"))
                 .placeholder(circularProgressDrawable)
+                .fallback(R.drawable.default_picture)
+                .error(R.drawable.default_picture)
+//                .listener(new RequestListener<Drawable>() {
+//                    @Override
+//                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+//                        String TAG="GlideLoadFailure";
+//                        // Log the GlideException here (locally or with a remote logging framework):
+//                        Log.e(TAG, "Load failed", e);
+//
+//                        // You can also log the individual causes:
+//                        for (Throwable t : e.getRootCauses()) {
+//                            Log.e(TAG, "Caused by", t);
+//                        }
+//                        // Or, to log all root causes locally, you can use the built in helper method:
+//                        e.logRootCauses(TAG);
+//
+//                        return false; // Allow calling onLoadFailed on the Target.
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+//                        return false;
+//                    }
+//                })
                 .into(holder.mCoverImageView);
     }
 

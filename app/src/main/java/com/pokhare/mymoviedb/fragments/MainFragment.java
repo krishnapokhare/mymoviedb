@@ -1,6 +1,7 @@
 package com.pokhare.mymoviedb.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,12 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.activities.MainActivity;
 import com.pokhare.mymoviedb.adapters.MoviesAdapter;
 import com.pokhare.mymoviedb.adapters.TvShowsAdapter;
-import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.ApiCallbackListener;
+import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.models.Movie;
 import com.pokhare.mymoviedb.models.TvShow;
 
@@ -27,8 +28,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cz.msebera.android.httpclient.Header;
 
 import static com.pokhare.mymoviedb.activities.MainActivity.LOG_TAG;
 
@@ -52,13 +51,13 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         movies = new ArrayList<Movie>();
         tvShows = new ArrayList<TvShow>();
-        DbHelper helper = new DbHelper();
-        helper.GetImageBaseUrl();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Context AppContext = getContext().getApplicationContext();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -86,7 +85,8 @@ public class MainFragment extends Fragment {
             }
         });
         popularMoviesRecyclerView.setAdapter(moviesAdapter);
-        GetPopularMovies();
+        ApiHelper.getInstance()
+                .GetJsonObject("movie/popular?language=en-US&page=1&", new GetPopularMoviesTask(), AppContext);
 
         //TV Shows
         RecyclerView popularTvShowsRecyclerView = view.findViewById(R.id.recyclerView_popularTvShows);
@@ -103,101 +103,66 @@ public class MainFragment extends Fragment {
 
         tvShowsAdapter = new TvShowsAdapter(tvShows);
         popularTvShowsRecyclerView.setAdapter(tvShowsAdapter);
-        GetPopularTvShows();
+        ApiHelper.getInstance()
+                .GetJsonObject("tv/popular?language=en-US&page=1&", new GetPopularTvShowsTask(), AppContext);
 
         return view;
     }
 
-    public void GetPopularMovies() {
-        Log.i("MovieDBHelper", "method:GetPopularMovies");
-        DbHelper movieHelper = new DbHelper();
-        movieHelper.get("movie/popular?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-                try {
-                    JSONArray resultsArray = response.getJSONArray("results");
-                    movies.clear();
-                    for (int i = 0; i < 4; i++) {
-                        Log.i("MovieDBHelper", resultsArray.getJSONObject(i).getString("title"));
-                        Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
-                        Log.i("MovieDbHelperTest", movie.getTitle());
+    class GetPopularMoviesTask implements ApiCallbackListener {
 
-                        movies.add(movie);
-                        Log.i("MovieDbHelperTest", String.valueOf(movies.size()));
-                    }
-//
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            moviesAdapter.notifyDataSetChanged();
-                        }
-                    });
+        @Override
+        public void onTaskCompleted(JSONObject result) {
+            try {
+                JSONArray resultsArray = result.getJSONArray("results");
+                movies.clear();
+                for (int i = 0; i < 4; i++) {
+                    Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("title"));
+                    Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
+                    Log.i("MovieDbHelperTest", movie.getTitle());
 
+                    movies.add(movie);
+                    Log.i("MovieDbHelperTest", String.valueOf(movies.size()));
                 }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        moviesAdapter.notifyDataSetChanged();
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
-            }
-        });
+        }
     }
 
-    public void GetPopularTvShows() {
-        Log.i("DBHelper", "method:GetPopularTVShows");
-        DbHelper dbHelper = new DbHelper();
-        dbHelper.get("tv/popular?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-                try {
-                    JSONArray resultsArray = response.getJSONArray("results");
-                    tvShows.clear();
-                    for (int i = 0; i < 4; i++) {
-                        Log.i("DBHelper", resultsArray.getJSONObject(i).getString("name"));
-                        TvShow tvShow = TvShow.Factory.NewTvShow(resultsArray.getJSONObject(i));
-                        Log.i("DbHelperTest", tvShow.getName());
+    class GetPopularTvShowsTask implements ApiCallbackListener {
 
-                        tvShows.add(tvShow);
-                        Log.i("DbHelperTest", String.valueOf(tvShows.size()));
-                    }
-//
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            tvShowsAdapter.notifyDataSetChanged();
-                        }
-                    });
+        @Override
+        public void onTaskCompleted(JSONObject result) {
+            try {
+                JSONArray resultsArray = result.getJSONArray("results");
+                tvShows.clear();
+                for (int i = 0; i < 4; i++) {
+                    Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("name"));
+                    TvShow tvShow = TvShow.Factory.NewTvShow(resultsArray.getJSONObject(i));
+                    Log.i("DbHelperTest", tvShow.getName());
 
+                    tvShows.add(tvShow);
+                    Log.i("DbHelperTest", String.valueOf(tvShows.size()));
                 }
-            }
+//
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvShowsAdapter.notifyDataSetChanged();
+                    }
+                });
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-
             }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
-            }
-        });
+        }
     }
-
 }

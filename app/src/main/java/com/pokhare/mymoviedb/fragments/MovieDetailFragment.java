@@ -15,13 +15,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.activities.MainActivity;
 import com.pokhare.mymoviedb.adapters.CastRecyclerViewAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCastAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCrewAdapter;
-import com.pokhare.mymoviedb.helpers.DbHelper;
+import com.pokhare.mymoviedb.helpers.ApiCallbackListener;
+import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
 import com.pokhare.mymoviedb.helpers.Global;
 import com.pokhare.mymoviedb.models.FeaturedCast;
@@ -34,8 +34,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cz.msebera.android.httpclient.Header;
 
 public class MovieDetailFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -58,21 +56,10 @@ public class MovieDetailFragment extends Fragment {
     private ImageView moviePosterImageView;
     private TextView movieTitleTextView;
     private TextView viewAllCastTextView;
-//    private OnFragmentInteractionListener mListener;
 
     public MovieDetailFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param movieId Parameter 1.
-     *                //     * @param param2 Parameter 2.
-     * @return A new instance of fragment MovieDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static MovieDetailFragment newInstance(Integer movieId) {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
@@ -87,56 +74,10 @@ public class MovieDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             movieId = getArguments().getInt(ARG_PARAM1);
-//            movie = getMovieDetails(movieId);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
         }
         featuredCrewList = new ArrayList<FeaturedCrew>();
         featuredCastList = new ArrayList<FeaturedCast>();
 
-    }
-
-    private void getMovieDetails(final Integer movieId) {
-        Log.i("MovieDBHelper", "method:getMovieDetails");
-        DbHelper movieHelper = new DbHelper();
-        movieHelper.get("movie/" + movieId + "?language=en-US&page=1&", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("MovieDbHelperTest", "Success");
-                // If the response is JSONObject instead of expected JSONArray
-                try {
-//                    JSONArray resultsArray = response.getJSONArray("results");
-//                    for (int i = 0; i < resultsArray.length(); i++) {
-//                    for (int i = 5; i >= 0; i--) {
-//                        Log.i("MovieDBHelper", response.getString("");
-                    movie = Movie.Factory.NewMovieWithAdditionalFields(response);
-                    Log.i("MovieDbHelperTest", movie.getTitle());
-                    ((MainActivity) getActivity()).setActionBarTitle(movie.getTitle());
-                    SetAllViewFields();
-                    GetFeaturedCrew(movieId);
-                    GetFeaturedCast(movieId);
-//                        movies.add(movie);
-//                        Log.i("MovieDbHelperTest", String.valueOf(i));
-                }//
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable
-                    throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject
-                    errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
-            }
-        });
     }
 
     @Override
@@ -158,9 +99,8 @@ public class MovieDetailFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         featuredCastRecyclerView.setLayoutManager(linearLayoutManager); // set LayoutManager to RecyclerView
-
-
-        getMovieDetails(movieId);
+        ApiHelper.getInstance().GetJsonObject("movie/" + movieId + "?language=en-US&page=1&",
+                new GetMovieDetailsTask(), getContext().getApplicationContext());
         return view;
     }
 
@@ -172,169 +112,106 @@ public class MovieDetailFragment extends Fragment {
 
         CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(getActivity());
         GlideApp.with(this)
-                .load(DbHelper.IMAGE_BASE_URL + "w500" + movie.getBackdrop_path())
+                .load(ApiHelper.getInstance().GetImageUrl(movie.getBackdrop_path(), "w500"))
                 .placeholder(circularProgressDrawable)
                 .into(movieImageView);
         GlideApp.with(this)
-                .load(DbHelper.IMAGE_BASE_URL + "w154" + movie.getPoster_path())
+                .load(ApiHelper.getInstance().GetImageUrl(movie.getPoster_path(), "w154"))
                 .placeholder(circularProgressDrawable)
                 .into(moviePosterImageView);
-
-//        featuredCrewList.add(new FeaturedCrew("David Leitch", "Director"));
-//        featuredCrewList.add(new FeaturedCrew("Paul Wernick", "Screenplay"));
-//        featuredCrewList.add(new FeaturedCrew("Ryan Reynolds", "Screenplay"));
-//        featuredCrewList.add(new FeaturedCrew("Fabian Nicieza", "Characters"));
-
-//        featuredCastList.add(new FeaturedCast("Ryan Reynolds", "Wade Wilson / Deadpool / Juggernaut / Himself", "http://image.tmdb.org/t/p/w92/h1co81QaT2nJA41Sb7eZwmWl1L2.jpg"));
-//        featuredCastList.add(new FeaturedCast("Josh Brolin", "Cable", "http://image.tmdb.org/t/p/w92/x8KKnvHyPvH16M6waAnY1OeCtA8.jpg"));
-//        featuredCastList.add(new FeaturedCast("Morena Baccarin", "Vanessa", "http://image.tmdb.org/t/p/w92/dhdQT0fMRcbg8Gi9nx7JF0oVzzr.jpg"));
-//        featuredCastList.add(new FeaturedCast("Julian Dennison", "Russel Collins / Firefist", "http://image.tmdb.org/t/p/w92/ApBsNEF9JnXDJ27XLaWnRXdVCQz.jpg"));
-
-
     }
 
-    private void GetFeaturedCrew(int movieId) {
-        DbHelper movieHelper = new DbHelper();
-        movieHelper.get("movie/" + movieId + "/credits?language=en-US&", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("MovieDbHelperTest", "Success");
-                // If the response is JSONObject instead of expected JSONArray
-                try {
-                    featuredCrewList.clear();
-                    JSONArray resultsArray = response.getJSONArray("crew");
-                    for (int i = 0; i < resultsArray.length() && i < 4; i++) {
-                        JSONObject jsonObject = resultsArray.getJSONObject(i);
-                        String name = jsonObject.getString("name");
-                        String role = jsonObject.getString("job");
-                        FeaturedCrew featuredCrew = new FeaturedCrew(name, role);
-                        featuredCrewList.add(featuredCrew);
-                    }
+    class GetMovieDetailsTask implements ApiCallbackListener {
 
-                    FeaturedCrewAdapter featuredCrewAdapter = new FeaturedCrewAdapter(featuredCrewList);
-                    featuredCrewRecyclerView.setAdapter(featuredCrewAdapter); // set the Adapter to RecyclerView
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        @Override
+        public void onTaskCompleted(JSONObject result) {
+            Log.i("ApiHelper", "Success");
+            try {
+
+                movie = Movie.Factory.NewMovieWithAdditionalFields(result);
+                Log.i("ApiHelper", movie.getTitle());
+                ((MainActivity) getActivity()).setActionBarTitle(movie.getTitle());
+                SetAllViewFields();
+                ApiHelper.getInstance().GetJsonObject("movie/" + movie.getId() + "/credits?language=en-US&",
+                        new GetFeaturedCrewTask(), getContext().getApplicationContext());
+                ApiHelper.getInstance().GetJsonObject("movie/" + movieId + "/credits?language=en-US&",
+                        new GetFeaturedCastTask(), getContext().getApplicationContext());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class GetFeaturedCrewTask implements ApiCallbackListener {
+        @Override
+        public void onTaskCompleted(JSONObject result) {
+            Log.i("MovieDbHelperTest", "Success");
+            // If the response is JSONObject instead of expected JSONArray
+            try {
+                featuredCrewList.clear();
+                JSONArray resultsArray = result.getJSONArray("crew");
+                for (int i = 0; i < resultsArray.length() && i < 4; i++) {
+                    JSONObject jsonObject = resultsArray.getJSONObject(i);
+                    String name = jsonObject.getString("name");
+                    String role = jsonObject.getString("job");
+                    FeaturedCrew featuredCrew = new FeaturedCrew(name, role);
+                    featuredCrewList.add(featuredCrew);
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable
-                    throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-
+                FeaturedCrewAdapter featuredCrewAdapter = new FeaturedCrewAdapter(featuredCrewList);
+                featuredCrewRecyclerView.setAdapter(featuredCrewAdapter); // set the Adapter to RecyclerView
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject
-                    errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
-            }
-        });
+        }
     }
 
-    private void GetFeaturedCast(int movieId) {
-        DbHelper movieHelper = new DbHelper();
-        movieHelper.get("movie/" + movieId + "/credits?language=en-US&", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("MovieDbHelperTest", "Success");
-                // If the response is JSONObject instead of expected JSONArray
-                try {
-                    featuredCastList.clear();
-                    JSONArray resultsArray = response.getJSONArray("cast");
-                    for (int i = 0; i < resultsArray.length(); i++) {
-                        JSONObject jsonObject = resultsArray.getJSONObject(i);
-                        int id = jsonObject.getInt("id");
-                        String name = jsonObject.getString("name");
-                        String character = jsonObject.getString("character");
-                        String profile_path = jsonObject.getString("profile_path");
-                        FeaturedCast featuredCast = new FeaturedCast(id, name, character, profile_path);
-                        featuredCastList.add(featuredCast);
-                    }
-                    FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList.subList(0, 9), new CastRecyclerViewAdapter.OnListFragmentInteractionListener() {
-                        @Override
-                        public void castFragmentOnClick(FeaturedCast featuredCast) {
-                            CastDetailsFragment castDetailsFragment = CastDetailsFragment.newInstance(featuredCast.getId());
-                            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                            fragmentTransaction.replace(R.id.mainContainer, castDetailsFragment);
-                            fragmentTransaction.addToBackStack(null);
-                            fragmentTransaction.commit();
-                        }
-                    });
-                    featuredCastRecyclerView.setAdapter(featuredCastAdapter);
-                    viewAllCastTextView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            CastFragment castFragment = CastFragment.newInstance(featuredCastList);
-                            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                            fragmentTransaction.replace(R.id.mainContainer, castFragment);
-                            fragmentTransaction.addToBackStack(null);
-                            fragmentTransaction.commit();
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+    class GetFeaturedCastTask implements ApiCallbackListener {
+
+        @Override
+        public void onTaskCompleted(JSONObject result) {
+            Log.i("MovieDbHelperTest", "Success");
+            // If the response is JSONObject instead of expected JSONArray
+            try {
+                featuredCastList.clear();
+                JSONArray resultsArray = result.getJSONArray("cast");
+                for (int i = 0; i < resultsArray.length(); i++) {
+                    JSONObject jsonObject = resultsArray.getJSONObject(i);
+                    int id = jsonObject.getInt("id");
+                    String name = jsonObject.getString("name");
+                    String character = jsonObject.getString("character");
+                    String profile_path = jsonObject.getString("profile_path");
+                    FeaturedCast featuredCast = new FeaturedCast(id, name, character, profile_path);
+                    featuredCastList.add(featuredCast);
                 }
+                FeaturedCastAdapter featuredCastAdapter = new FeaturedCastAdapter(featuredCastList.subList(0, 9), new CastRecyclerViewAdapter.OnListFragmentInteractionListener() {
+                    @Override
+                    public void castFragmentOnClick(FeaturedCast featuredCast) {
+                        CastDetailsFragment castDetailsFragment = CastDetailsFragment.newInstance(featuredCast.getId());
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.mainContainer, castDetailsFragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
+                featuredCastRecyclerView.setAdapter(featuredCastAdapter);
+                viewAllCastTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CastFragment castFragment = CastFragment.newInstance(featuredCastList);
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.mainContainer, castFragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable
-                    throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject
-                    errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("MovieDbHelperTest", String.valueOf(statusCode));
-            }
-        });
+        }
     }
-
-//    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }
