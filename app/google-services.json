@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "433423164874",
+    "firebase_url": "https://mymoviedb-6b4eb.firebaseio.com",
+    "project_id": "mymoviedb-6b4eb",
+    "storage_bucket": "mymoviedb-6b4eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433423164874:android:55fbfab41ba4eea8",
+        "android_client_info": {
+          "package_name": "com.pokhare.mymoviedb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "433423164874-n49h8hp28iff7em44pj4frb6gedu10ck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pokhare.mymoviedb",
+            "certificate_hash": "f60a1608d334a960b7f75f64452ec85131538280"
+          }
+        },
+        {
+          "client_id": "433423164874-g7m6qev53klue1n6dhcrr4aavabpkije.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "433423164874-g7m6qev53klue1n6dhcrr4aavabpkije.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3IjWO7L1RT-nQTmsXHPBdGBTbQhAD8QI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "433423164874-g7m6qev53klue1n6dhcrr4aavabpkije.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
