@@ -42,7 +42,7 @@
                 android:paddingEnd="16dp"
                 android:text="@string/movie_title"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/extralarge_text_size" />
+                android:textSize="@dimen/text_size_large" />
         </RelativeLayout>
 
         <LinearLayout

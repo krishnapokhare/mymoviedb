@@ -1,6 +1,8 @@
 package com.pokhare.mymoviedb.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.CircularProgressDrawable;
@@ -40,6 +42,7 @@ public class MovieDetailFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final String MOVIE_ID = "movieId";
 
     // TODO: Rename and change types of parameters
     private Integer movieId;
@@ -70,13 +73,23 @@ public class MovieDetailFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(MOVIE_ID, movieId);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        movieId = savedInstanceState.getInt(MOVIE_ID);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             movieId = getArguments().getInt(ARG_PARAM1);
         }
-        featuredCrewList = new ArrayList<FeaturedCrew>();
-        featuredCastList = new ArrayList<FeaturedCast>();
 
     }
 
@@ -99,6 +112,10 @@ public class MovieDetailFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         featuredCastRecyclerView.setLayoutManager(linearLayoutManager); // set LayoutManager to RecyclerView
+
+        featuredCrewList = new ArrayList<FeaturedCrew>();
+        featuredCastList = new ArrayList<FeaturedCast>();
+
         ApiHelper.getInstance().GetJsonObject("movie/" + movieId + "?language=en-US&page=1&",
                 new GetMovieDetailsTask(), getContext().getApplicationContext());
         return view;

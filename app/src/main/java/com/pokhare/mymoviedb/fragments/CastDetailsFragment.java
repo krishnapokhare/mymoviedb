@@ -2,6 +2,8 @@ package com.pokhare.mymoviedb.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.util.Log;
@@ -29,7 +31,7 @@ import org.json.JSONObject;
 public class CastDetailsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_CAST_ID = "movieId";
+    private static final String ARG_CAST_ID = "castId";
 
     // TODO: Rename and change types of parameters
     private int castId;
@@ -60,12 +62,22 @@ public class CastDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(ARG_CAST_ID, castId);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        castId = savedInstanceState.getInt(ARG_CAST_ID);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             castId = getArguments().getInt(ARG_CAST_ID);
-            ApiHelper.getInstance().GetJsonObject("person/" + castId + "?language=en-US&page=1&"
-                    , new GetCastDetailsTask(), getContext().getApplicationContext());
         }
     }
 
@@ -105,6 +117,8 @@ public class CastDetailsFragment extends Fragment {
         castNameTextView = view.findViewById(R.id.castDetailsNameTextView);
         castImageView = view.findViewById(R.id.castDetailsImageView);
         castDetailsBiographyTextView = view.findViewById(R.id.castDetailsBiographyTextView);
+        ApiHelper.getInstance().GetJsonObject("person/" + castId + "?language=en-US&page=1&"
+                , new GetCastDetailsTask(), getContext().getApplicationContext());
         return view;
     }
 }

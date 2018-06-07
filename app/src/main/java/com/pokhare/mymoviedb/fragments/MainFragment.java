@@ -49,8 +49,6 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        movies = new ArrayList<Movie>();
-        tvShows = new ArrayList<TvShow>();
     }
 
     @Override
@@ -60,7 +58,8 @@ public class MainFragment extends Fragment {
         Context AppContext = getContext().getApplicationContext();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-
+        movies = new ArrayList<Movie>();
+        tvShows = new ArrayList<TvShow>();
         ((MainActivity) getActivity()).setActionBarTitle("My Movie Database");
         //Movie
         RecyclerView popularMoviesRecyclerView = view.findViewById(R.id.recyclerView_popularMovies);
@@ -88,23 +87,23 @@ public class MainFragment extends Fragment {
         ApiHelper.getInstance()
                 .GetJsonObject("movie/popular?language=en-US&page=1&", new GetPopularMoviesTask(), AppContext);
 
-        //TV Shows
-        RecyclerView popularTvShowsRecyclerView = view.findViewById(R.id.recyclerView_popularTvShows);
-        if (popularTvShowsRecyclerView == null) {
-            Log.i(LOG_TAG, "RecyclerView is null");
-        }
-        popularTvShowsRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager TvShowLayoutManager = new LinearLayoutManager(getActivity());
-        TvShowLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (tvShows.size() > 0 & popularTvShowsRecyclerView != null) {
-            popularTvShowsRecyclerView.setAdapter(new TvShowsAdapter(tvShows));
-        }
-        popularTvShowsRecyclerView.setLayoutManager(TvShowLayoutManager);
-
-        tvShowsAdapter = new TvShowsAdapter(tvShows);
-        popularTvShowsRecyclerView.setAdapter(tvShowsAdapter);
-        ApiHelper.getInstance()
-                .GetJsonObject("tv/popular?language=en-US&page=1&", new GetPopularTvShowsTask(), AppContext);
+//        //TV Shows
+//        RecyclerView popularTvShowsRecyclerView = view.findViewById(R.id.recyclerView_popularTvShows);
+//        if (popularTvShowsRecyclerView == null) {
+//            Log.i(LOG_TAG, "RecyclerView is null");
+//        }
+//        popularTvShowsRecyclerView.setHasFixedSize(true);
+//        LinearLayoutManager TvShowLayoutManager = new LinearLayoutManager(getActivity());
+//        TvShowLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        if (tvShows.size() > 0 & popularTvShowsRecyclerView != null) {
+//            popularTvShowsRecyclerView.setAdapter(new TvShowsAdapter(tvShows));
+//        }
+//        popularTvShowsRecyclerView.setLayoutManager(TvShowLayoutManager);
+//
+//        tvShowsAdapter = new TvShowsAdapter(tvShows);
+//        popularTvShowsRecyclerView.setAdapter(tvShowsAdapter);
+//        ApiHelper.getInstance()
+//                .GetJsonObject("tv/popular?language=en-US&page=1&", new GetPopularTvShowsTask(), AppContext);
 
         return view;
     }
@@ -116,7 +115,7 @@ public class MainFragment extends Fragment {
             try {
                 JSONArray resultsArray = result.getJSONArray("results");
                 movies.clear();
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < resultsArray.length(); i++) {
                     Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("title"));
                     Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
                     Log.i("MovieDbHelperTest", movie.getTitle());
