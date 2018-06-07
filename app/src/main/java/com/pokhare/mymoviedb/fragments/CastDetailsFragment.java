@@ -109,9 +109,9 @@ public class CastDetailsFragment extends Fragment {
     }
 
     private void GetAllPersonalDetails(FeaturedCast featuredCast) {
-        castPersonalDetailsList.add(Arrays.asList("Known For", "Acting"));
+//        castPersonalDetailsList.add(Arrays.asList("Known For", "Acting"));
         castPersonalDetailsList.add(Arrays.asList("Gender", featuredCast.getGender() == 1 ? "Female" : "Male"));
-        castPersonalDetailsList.add(Arrays.asList("Known Credits", "1"));
+//        castPersonalDetailsList.add(Arrays.asList("Known Credits", "1"));
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         castPersonalDetailsList.add(Arrays.asList("Birthday", df.format(featuredCast.getBirthDay())));
         castPersonalDetailsList.add(Arrays.asList("Place of Birth", featuredCast.getBirthPlace() != "null" ? featuredCast.getBirthPlace() : "-"));
@@ -132,7 +132,7 @@ public class CastDetailsFragment extends Fragment {
         castPersonalDetailsAdapter = new CastPersonalDetailsAdapter(castPersonalDetailsList);
         personalDetailsRecycleView.setAdapter(castPersonalDetailsAdapter);
 //        personalDetailsRecycleView.setHasFixedSize(true);
-        personalDetailsRecycleView.setNestedScrollingEnabled(false);
+//        personalDetailsRecycleView.setNestedScrollingEnabled(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         personalDetailsRecycleView.setLayoutManager(linearLayoutManager);
