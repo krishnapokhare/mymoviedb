@@ -63,6 +63,7 @@ public class MovieDetailFragment extends Fragment {
     public MovieDetailFragment() {
         // Required empty public constructor
     }
+
     public static MovieDetailFragment newInstance(Integer movieId) {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
@@ -81,7 +82,11 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        movieId = savedInstanceState.getInt(MOVIE_ID);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(MOVIE_ID)) {
+                movieId = savedInstanceState.getInt(MOVIE_ID);
+            }
+        }
     }
 
     @Override
@@ -90,7 +95,6 @@ public class MovieDetailFragment extends Fragment {
         if (getArguments() != null) {
             movieId = getArguments().getInt(ARG_PARAM1);
         }
-
     }
 
     @Override

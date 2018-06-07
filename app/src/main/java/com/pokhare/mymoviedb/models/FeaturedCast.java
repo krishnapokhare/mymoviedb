@@ -209,6 +209,7 @@ public class FeaturedCast implements Parcelable {
                 featuredCast.setGender(jsonObject.getInt("gender"));
                 featuredCast.setHomepage(jsonObject.getString("homepage"));
                 featuredCast.setImdb_id(jsonObject.getString("imdb_id"));
+                featuredCast.setBirthPlace(jsonObject.getString("place_of_birth"));
                 try {
                     featuredCast.setBirthDay(format.parse(jsonObject.getString("birthday")));
                 } catch (ParseException e) {
