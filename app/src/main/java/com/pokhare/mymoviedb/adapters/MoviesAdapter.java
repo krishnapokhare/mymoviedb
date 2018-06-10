@@ -38,16 +38,20 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapter.ViewHolder holder, int position) {
-        Movie movie = movies.get(position);
-        holder.mTitleTextView.setText(movie.getTitle());
+        if (movies != null) {
+            Movie movie = movies.get(position);
+            holder.mTitleTextView.setText(movie.getTitle());
 
-        CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.mCoverImageView.getContext());
-        GlideApp.with(holder.mCoverImageView.getContext())
-                .load(ApiHelper.getInstance().GetImageUrl(movie.getBackdrop_path(), "w500"))
-                .placeholder(circularProgressDrawable)
-                .fallback(R.drawable.default_picture)
-                .error(R.drawable.default_picture)
-                .into(holder.mCoverImageView);
+            CircularProgressDrawable circularProgressDrawable = Global.getCircularProgressDrawable(holder.mCoverImageView.getContext());
+            GlideApp.with(holder.mCoverImageView.getContext())
+                    .load(ApiHelper.getInstance().GetImageUrl(movie.getBackdrop_path(), "w500"))
+                    .placeholder(circularProgressDrawable)
+                    .fallback(R.drawable.default_picture)
+                    .error(R.drawable.default_picture)
+                    .into(holder.mCoverImageView);
+        } else {
+            holder.mTitleTextView.setText("Movies not loaded properly. Please try again.");
+        }
     }
 
     public interface MoviesAdapterListener {
@@ -57,7 +61,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return movies.size();
+        if (movies != null)
+            return movies.size();
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
