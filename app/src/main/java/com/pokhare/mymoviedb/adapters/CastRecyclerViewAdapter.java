@@ -16,13 +16,6 @@ import com.pokhare.mymoviedb.models.FeaturedCast;
 
 import java.util.List;
 
-//import com.pokhare.mymoviedb.fragments.CastFragment.OnListFragmentInteractionListener;
-
-///**
-// * {@link RecyclerView.Adapter} that can display a {@link FeaturedCast} and makes a call to the
-// * specified {@link OnListFragmentInteractionListener}.
-// * TODO: Replace the implementation with code for your data type.
-// */
 public class CastRecyclerViewAdapter extends RecyclerView.Adapter<CastRecyclerViewAdapter.ViewHolder> {
 
     private final List<FeaturedCast> castList;
@@ -86,7 +79,7 @@ public class CastRecyclerViewAdapter extends RecyclerView.Adapter<CastRecyclerVi
             super(view);
             mView = view;
 //            mIdView = (TextView) view.findViewById(R.id.item_number);
-            castNameTextView = (TextView) view.findViewById(R.id.castNameTextView);
+            castNameTextView = view.findViewById(R.id.castNameTextView);
             castImageView = view.findViewById(R.id.castImageView);
             castCharacterTextView = view.findViewById(R.id.castCharacterTextView);
         }

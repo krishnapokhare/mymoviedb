@@ -40,9 +40,9 @@ public class FeaturedCrewAdapter extends RecyclerView.Adapter<FeaturedCrewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView featuredCrewNameTextView;
-        public TextView featuredCrewRoleTextView;
-        public View mView;
+        TextView featuredCrewNameTextView;
+        TextView featuredCrewRoleTextView;
+        View mView;
 
         public ViewHolder(View view) {
             super(view);

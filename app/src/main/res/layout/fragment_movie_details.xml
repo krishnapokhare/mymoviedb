@@ -178,13 +178,27 @@
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:layout_marginTop="@dimen/text_margin"
                 android:id="@+id/viewAllCastTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="View All Cast"
+                android:text="@string/fullCastCrewLabel"
                 android:textSize="@dimen/large_text_size"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/factsLabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_margin"
+                android:text="@string/factsLabel"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/movieFactsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

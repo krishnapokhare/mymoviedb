@@ -22,6 +22,7 @@ import com.pokhare.mymoviedb.activities.MainActivity;
 import com.pokhare.mymoviedb.adapters.CastRecyclerViewAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCastAdapter;
 import com.pokhare.mymoviedb.adapters.FeaturedCrewAdapter;
+import com.pokhare.mymoviedb.adapters.KeyValueLayoutAdapter;
 import com.pokhare.mymoviedb.helpers.ApiCallbackListener;
 import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
@@ -31,20 +32,17 @@ import com.pokhare.mymoviedb.models.FeaturedCrew;
 import com.pokhare.mymoviedb.models.Movie;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MovieDetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final String MOVIE_ID = "movieId";
 
-    // TODO: Rename and change types of parameters
     private Integer movieId;
     private String mParam2;
     private Movie movie;
@@ -59,6 +57,9 @@ public class MovieDetailFragment extends Fragment {
     private ImageView moviePosterImageView;
     private TextView movieTitleTextView;
     private TextView viewAllCastTextView;
+    private RecyclerView factsRecyclerView;
+    private List<List<String>> movieFactsList;
+    private KeyValueLayoutAdapter keyValueLayoutAdapter;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -101,7 +102,7 @@ public class MovieDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_details, container, false);
         ratingProgressBar = view.findViewById(R.id.ratingProgressBar);
         txtProgressbar = view.findViewById(R.id.txtProgress);
         movieImageView = view.findViewById(R.id.detailsImageView);
@@ -119,6 +120,14 @@ public class MovieDetailFragment extends Fragment {
 
         featuredCrewList = new ArrayList<FeaturedCrew>();
         featuredCastList = new ArrayList<FeaturedCast>();
+
+        factsRecyclerView = view.findViewById(R.id.movieFactsRecyclerView);
+        movieFactsList = new ArrayList<List<String>>();
+        keyValueLayoutAdapter = new KeyValueLayoutAdapter(movieFactsList);
+        factsRecyclerView.setAdapter(keyValueLayoutAdapter);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(getActivity());
+        linearLayoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
+        factsRecyclerView.setLayoutManager(linearLayoutManager2);
 
         ApiHelper.getInstance().GetJsonObject("movie/" + movieId + "?language=en-US&page=1&",
                 new GetMovieDetailsTask(), getContext().getApplicationContext());
@@ -152,13 +161,37 @@ public class MovieDetailFragment extends Fragment {
                 movie = Movie.Factory.NewMovieWithAdditionalFields(result);
                 Log.i("ApiHelper", movie.getTitle());
                 ((MainActivity) getActivity()).setActionBarTitle(movie.getTitle());
+                GetAllMovieFacts(movie);
                 SetAllViewFields();
                 ApiHelper.getInstance().GetJsonObject("movie/" + movie.getId() + "/credits?language=en-US&",
                         new GetFeaturedCrewTask(), getContext().getApplicationContext());
-                ApiHelper.getInstance().GetJsonObject("movie/" + movieId + "/credits?language=en-US&",
+                ApiHelper.getInstance().GetJsonObject("movie/" + movie.getId() + "/credits?language=en-US&",
                         new GetFeaturedCastTask(), getContext().getApplicationContext());
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+
+        private void GetAllMovieFacts(Movie movie) {
+            movieFactsList.clear();
+            movieFactsList.add(Arrays.asList("Status", movie.getStatus()));
+            movieFactsList.add(Arrays.asList("Original Language", movie.getOriginal_language()));
+            movieFactsList.add(Arrays.asList("Runtime", formatRuntime(movie.getRuntime())));
+            movieFactsList.add(Arrays.asList("Budget", "$" + movie.getBudget()));
+            keyValueLayoutAdapter.notifyDataSetChanged();
+        }
+
+        private String formatRuntime(int runtime) {
+            if (runtime <= 60) {
+                return runtime + "m";
+            } else {
+                int hours = runtime / 60;
+                int mins = runtime % 60;
+                if (mins > 0) {
+                    return hours + "h " + mins + "m";
+                } else {
+                    return hours + "hrs";
+                }
             }
         }
     }
@@ -181,8 +214,6 @@ public class MovieDetailFragment extends Fragment {
 
                 FeaturedCrewAdapter featuredCrewAdapter = new FeaturedCrewAdapter(featuredCrewList);
                 featuredCrewRecyclerView.setAdapter(featuredCrewAdapter); // set the Adapter to RecyclerView
-            } catch (JSONException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -228,8 +259,6 @@ public class MovieDetailFragment extends Fragment {
                         fragmentTransaction.commit();
                     }
                 });
-            } catch (JSONException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }

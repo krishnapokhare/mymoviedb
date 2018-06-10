@@ -29,7 +29,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin_small"
             android:text="Actor Name"
-            android:textAppearance="?attr/textAppearanceListItem"
             android:textStyle="bold" />
 
         <TextView
@@ -37,7 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin_small"
-            android:text="Actor Name"
-            android:textAppearance="?attr/textAppearanceListItemSmall" />
+            android:text="Actor Name" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

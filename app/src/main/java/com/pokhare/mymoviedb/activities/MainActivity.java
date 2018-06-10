@@ -147,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        return super.onPrepareOptionsMenu(menu) | true;
+        super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     public void setActionBarTitle(String title) {
@@ -216,13 +217,9 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException | JSONException e) {
                         e.printStackTrace();
                     } catch (TimeoutException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Log.i("mResultsSize", String.valueOf(mResults.size()));

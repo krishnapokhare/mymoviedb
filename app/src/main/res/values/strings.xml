@@ -8,4 +8,6 @@
     <string name="search_hint">Search Movies or TV Shows</string>
     <string name="movie_title">Movie Title</string>
     <string name="actor_name">Actor Name</string>
+    <string name="fullCastCrewLabel"><![CDATA[Full Cast & Crew]]></string>
+    <string name="factsLabel">Facts</string>
 </resources>

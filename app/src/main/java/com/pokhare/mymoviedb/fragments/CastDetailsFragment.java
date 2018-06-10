@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.activities.MainActivity;
-import com.pokhare.mymoviedb.adapters.CastPersonalDetailsAdapter;
+import com.pokhare.mymoviedb.adapters.KeyValueLayoutAdapter;
 import com.pokhare.mymoviedb.helpers.ApiCallbackListener;
 import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.helpers.GlideApp;
@@ -38,11 +38,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class CastDetailsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CAST_ID = "castId";
 
-    // TODO: Rename and change types of parameters
     private int castId;
     private FeaturedCast featuredCast;
     private TextView castNameTextView;
@@ -50,21 +47,13 @@ public class CastDetailsFragment extends Fragment {
     private TextView castDetailsBiographyTextView;
     private RecyclerView personalDetailsRecycleView;
     private List<List<String>> castPersonalDetailsList;
-    private CastPersonalDetailsAdapter castPersonalDetailsAdapter;
+    private KeyValueLayoutAdapter keyValueLayoutAdapter;
 
 
     public CastDetailsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment CastDetailsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static CastDetailsFragment newInstance(int param1) {
         CastDetailsFragment fragment = new CastDetailsFragment();
         Bundle args = new Bundle();
@@ -105,11 +94,12 @@ public class CastDetailsFragment extends Fragment {
                 .load(ApiHelper.getInstance().GetImageUrl(featuredCast.getImageUrl(), "w500"))
                 .placeholder(circularProgressDrawable)
                 .into(castImageView);
-        castPersonalDetailsAdapter.notifyDataSetChanged();
+        keyValueLayoutAdapter.notifyDataSetChanged();
     }
 
     private void GetAllPersonalDetails(FeaturedCast featuredCast) {
 //        castPersonalDetailsList.add(Arrays.asList("Known For", "Acting"));
+        castPersonalDetailsList.clear();
         castPersonalDetailsList.add(Arrays.asList("Gender", featuredCast.getGender() == 1 ? "Female" : "Male"));
 //        castPersonalDetailsList.add(Arrays.asList("Known Credits", "1"));
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,8 +119,8 @@ public class CastDetailsFragment extends Fragment {
         castDetailsBiographyTextView = view.findViewById(R.id.castDetailsBiographyTextView);
         personalDetailsRecycleView = view.findViewById(R.id.castPersonalDetailsRecyclerView);
         castPersonalDetailsList = new ArrayList<List<String>>();
-        castPersonalDetailsAdapter = new CastPersonalDetailsAdapter(castPersonalDetailsList);
-        personalDetailsRecycleView.setAdapter(castPersonalDetailsAdapter);
+        keyValueLayoutAdapter = new KeyValueLayoutAdapter(castPersonalDetailsList);
+        personalDetailsRecycleView.setAdapter(keyValueLayoutAdapter);
 //        personalDetailsRecycleView.setHasFixedSize(true);
 //        personalDetailsRecycleView.setNestedScrollingEnabled(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

@@ -10,31 +10,31 @@ import com.pokhare.mymoviedb.R;
 
 import java.util.List;
 
-public class CastPersonalDetailsAdapter extends RecyclerView.Adapter<CastPersonalDetailsAdapter.ViewHolder> {
+public class KeyValueLayoutAdapter extends RecyclerView.Adapter<KeyValueLayoutAdapter.ViewHolder> {
 
-    private final List<List<String>> castPersonalDetailsList;
+    private final List<List<String>> keyValueList;
 
-    public CastPersonalDetailsAdapter(List<List<String>> castPersonalDetailsList) {
-        this.castPersonalDetailsList = castPersonalDetailsList;
+    public KeyValueLayoutAdapter(List<List<String>> keyValueList) {
+        this.keyValueList = keyValueList;
     }
 
     @Override
-    public CastPersonalDetailsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public KeyValueLayoutAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cast_personal_details, parent, false);
-        return new CastPersonalDetailsAdapter.ViewHolder(view);
+                .inflate(R.layout.key_value_layout, parent, false);
+        return new KeyValueLayoutAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final CastPersonalDetailsAdapter.ViewHolder holder, final int position) {
-        List<String> personalDetail = castPersonalDetailsList.get(position);
+    public void onBindViewHolder(final KeyValueLayoutAdapter.ViewHolder holder, final int position) {
+        List<String> personalDetail = keyValueList.get(position);
         holder.personalDetailsLabelTextView.setText(personalDetail.get(0));
         holder.personalDetailsValueTextView.setText(personalDetail.get(1));
     }
 
     @Override
     public int getItemCount() {
-        return castPersonalDetailsList.size();
+        return keyValueList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
