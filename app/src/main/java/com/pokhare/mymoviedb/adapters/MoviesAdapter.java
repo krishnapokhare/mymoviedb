@@ -54,6 +54,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         }
     }
 
+    public void setValues(List<Movie> movies) {
+        this.movies = movies;
+        notifyDataSetChanged();
+    }
+
     public interface MoviesAdapterListener {
         void onMovieItemClick(View v, int position);
     }

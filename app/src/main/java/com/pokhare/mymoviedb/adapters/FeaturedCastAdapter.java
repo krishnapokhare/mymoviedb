@@ -58,6 +58,11 @@ public class FeaturedCastAdapter extends RecyclerView.Adapter<FeaturedCastAdapte
         });
     }
 
+    public void setValues(List<FeaturedCast> featuredCastList) {
+        this.featuredCastList = featuredCastList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return featuredCastList.size();

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class KeyValueLayoutAdapter extends RecyclerView.Adapter<KeyValueLayoutAdapter.ViewHolder> {
 
-    private final List<List<String>> keyValueList;
+    private List<List<String>> keyValueList;
 
     public KeyValueLayoutAdapter(List<List<String>> keyValueList) {
         this.keyValueList = keyValueList;
@@ -30,6 +30,11 @@ public class KeyValueLayoutAdapter extends RecyclerView.Adapter<KeyValueLayoutAd
         List<String> personalDetail = keyValueList.get(position);
         holder.personalDetailsLabelTextView.setText(personalDetail.get(0));
         holder.personalDetailsValueTextView.setText(personalDetail.get(1));
+    }
+
+    public void setValues(List<List<String>> keyValueList) {
+        this.keyValueList = keyValueList;
+        notifyDataSetChanged();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.pokhare.mymoviedb.fragments;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,14 +19,10 @@ import com.pokhare.mymoviedb.R;
 import com.pokhare.mymoviedb.activities.MainActivity;
 import com.pokhare.mymoviedb.adapters.MoviesAdapter;
 import com.pokhare.mymoviedb.adapters.TvShowsAdapter;
-import com.pokhare.mymoviedb.helpers.ApiCallbackListener;
-import com.pokhare.mymoviedb.helpers.ApiHelper;
 import com.pokhare.mymoviedb.models.Movie;
 import com.pokhare.mymoviedb.models.TvShow;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.pokhare.mymoviedb.viewmodels.MovieDetailsViewModel;
+import com.pokhare.mymoviedb.viewmodels.MoviesViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +35,11 @@ import static com.pokhare.mymoviedb.activities.MainActivity.LOG_TAG;
 public class MainFragment extends Fragment {
 
 
-    private ArrayList<Movie> movies;
+    private List<Movie> movies;
     private List<TvShow> tvShows;
     private MoviesAdapter moviesAdapter;
     private TvShowsAdapter tvShowsAdapter;
+
 
     public MainFragment() {
         // Required empty public constructor
@@ -49,6 +48,19 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        MoviesViewModel viewModel = ViewModelProviders.of(getActivity()).get(MoviesViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> moviesList) {
+                movies = moviesList;
+                moviesAdapter.setValues(moviesList);
+            }
+        });
     }
 
     @Override
@@ -76,6 +88,8 @@ public class MainFragment extends Fragment {
         moviesAdapter = new MoviesAdapter(movies, new MoviesAdapter.MoviesAdapterListener() {
             @Override
             public void onMovieItemClick(View v, int position) {
+                MovieDetailsViewModel viewModel = ViewModelProviders.of(getActivity()).get(MovieDetailsViewModel.class);
+                viewModel.setMovieId(movies.get(position).getId());
                 MovieDetailFragment movieDetailFragment = MovieDetailFragment.newInstance(movies.get(position).getId());
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.mainContainer, movieDetailFragment);
@@ -84,8 +98,8 @@ public class MainFragment extends Fragment {
             }
         });
         popularMoviesRecyclerView.setAdapter(moviesAdapter);
-        ApiHelper.getInstance()
-                .GetJsonObject("movie/popular?language=en-US&page=1&", new GetPopularMoviesTask(), AppContext);
+//        ApiHelper.getInstance()
+//                .GetJsonObject("movie/popular?language=en-US&page=1&", new GetPopularMoviesTask(), AppContext);
 
 //        //TV Shows
 //        RecyclerView popularTvShowsRecyclerView = view.findViewById(R.id.recyclerView_popularTvShows);
@@ -108,60 +122,60 @@ public class MainFragment extends Fragment {
         return view;
     }
 
-    class GetPopularMoviesTask implements ApiCallbackListener {
-
-        @Override
-        public void onTaskCompleted(JSONObject result) {
-            try {
-                JSONArray resultsArray = result.getJSONArray("results");
-                movies.clear();
-                for (int i = 0; i < resultsArray.length(); i++) {
-                    Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("title"));
-                    Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
-                    Log.i("MovieDbHelperTest", movie.getTitle());
-
-                    movies.add(movie);
-                    Log.i("MovieDbHelperTest", String.valueOf(movies.size()));
-                }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        moviesAdapter.notifyDataSetChanged();
-                    }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class GetPopularTvShowsTask implements ApiCallbackListener {
-
-        @Override
-        public void onTaskCompleted(JSONObject result) {
-            try {
-                JSONArray resultsArray = result.getJSONArray("results");
-                tvShows.clear();
-                for (int i = 0; i < 4; i++) {
-                    Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("name"));
-                    TvShow tvShow = TvShow.Factory.NewTvShow(resultsArray.getJSONObject(i));
-                    Log.i("DbHelperTest", tvShow.getName());
-
-                    tvShows.add(tvShow);
-                    Log.i("DbHelperTest", String.valueOf(tvShows.size()));
-                }
+//    class GetPopularMoviesTask implements ApiCallbackListener {
 //
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } finally {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tvShowsAdapter.notifyDataSetChanged();
-                    }
-                });
-
-            }
-        }
-    }
+//        @Override
+//        public void onTaskCompleted(JSONObject result) {
+//            try {
+//                JSONArray resultsArray = result.getJSONArray("results");
+//                movies.clear();
+//                for (int i = 0; i < resultsArray.length(); i++) {
+//                    Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("title"));
+//                    Movie movie = Movie.Factory.NewMovieWithBasicFields(resultsArray.getJSONObject(i));
+//                    Log.i("MovieDbHelperTest", movie.getTitle());
+//
+//                    movies.add(movie);
+//                    Log.i("MovieDbHelperTest", String.valueOf(movies.size()));
+//                }
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        moviesAdapter.notifyDataSetChanged();
+//                    }
+//                });
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//
+//    class GetPopularTvShowsTask implements ApiCallbackListener {
+//
+//        @Override
+//        public void onTaskCompleted(JSONObject result) {
+//            try {
+//                JSONArray resultsArray = result.getJSONArray("results");
+//                tvShows.clear();
+//                for (int i = 0; i < 4; i++) {
+//                    Log.i("ApiHelper", resultsArray.getJSONObject(i).getString("name"));
+//                    TvShow tvShow = TvShow.Factory.NewTvShow(resultsArray.getJSONObject(i));
+//                    Log.i("DbHelperTest", tvShow.getName());
+//
+//                    tvShows.add(tvShow);
+//                    Log.i("DbHelperTest", String.valueOf(tvShows.size()));
+//                }
+////
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            } finally {
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        tvShowsAdapter.notifyDataSetChanged();
+//                    }
+//                });
+//
+//            }
+//        }
+//    }
 }

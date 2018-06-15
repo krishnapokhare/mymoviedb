@@ -34,6 +34,11 @@ public class FeaturedCrewAdapter extends RecyclerView.Adapter<FeaturedCrewAdapte
         holder.featuredCrewRoleTextView.setText(featuredCrew.getRole());
     }
 
+    public void setValues(List<FeaturedCrew> featuredCrewList) {
+        this.featuredCrewList = featuredCrewList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return featuredCrewList.size();
